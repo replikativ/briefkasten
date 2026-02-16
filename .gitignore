@@ -1,0 +1,26 @@
+# Clojure
+.cpcache/
+target/
+classes/
+*.jar
+*.class
+pom.xml.asc
+.nrepl-port
+.repl*
+
+# Editors
+.idea/
+*.iml
+.vscode/
+.calva/
+.lsp/
+.dir-locals.el
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+/checkouts
+.clj-kondo/
+.claude/
