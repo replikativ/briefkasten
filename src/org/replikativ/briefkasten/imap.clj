@@ -242,16 +242,16 @@
       (let [msgs (.getMessages folder)
             total (alength msgs)
             _ (trove/log! {:level :info, :id ::prefetch-uids
-                            :data {:folder folder-name, :count total}
-                            :msg (format "[%s] prefetching UIDs for %d messages..." folder-name total)})
+                           :data {:folder folder-name, :count total}
+                           :msg (format "[%s] prefetching UIDs for %d messages..." folder-name total)})
             ;; Bulk-prefetch UIDs — single IMAP FETCH command instead of N round-trips
             fp (FetchProfile.)]
         (.add fp UIDFolder$FetchProfileItem/UID)
         (.fetch ^IMAPFolder folder msgs fp)
         (let [uids (set (map #(.getUID ^IMAPFolder folder %) msgs))]
           (trove/log! {:level :info, :id ::uids-fetched
-                        :data {:folder folder-name, :count (count uids)}
-                        :msg (format "[%s] got %d UIDs" folder-name (count uids))})
+                       :data {:folder folder-name, :count (count uids)}
+                       :msg (format "[%s] got %d UIDs" folder-name (count uids))})
           uids))
       (finally
         (.close folder false)))))
@@ -303,10 +303,10 @@
                 done (+ (count result) (count parsed))]
             (when (> total batch-size)
               (trove/log! {:level :info, :id ::fetch-progress
-                            :data {:folder folder-name, :done done, :total total}
-                            :msg (format "[%s] fetched %d/%d messages (%.0f%%)"
-                                         folder-name done total
-                                         (* 100.0 (/ done total)))}))
+                           :data {:folder folder-name, :done done, :total total}
+                           :msg (format "[%s] fetched %d/%d messages (%.0f%%)"
+                                        folder-name done total
+                                        (* 100.0 (/ done total)))}))
 
             (recur (rest remaining) (into result parsed)))
           result)))))
@@ -327,8 +327,8 @@
         total (.getMessageCount folder)]
     (.close folder false)
     (trove/log! {:level :info, :id ::fetch-all
-                  :data {:folder folder-name, :count total}
-                  :msg (format "[%s] %d messages to fetch (full MIME)" folder-name total)})
+                 :data {:folder folder-name, :count total}
+                 :msg (format "[%s] %d messages to fetch (full MIME)" folder-name total)})
     (loop [offset 0
            processed 0
            ^IMAPFolder folder (open-folder store folder-name)
@@ -351,10 +351,10 @@
                              batch-array)
                 done (+ processed (count parsed))]
             (trove/log! {:level :info, :id ::fetch-all-progress
-                          :data {:folder folder-name, :done done, :total total}
-                          :msg (format "[%s] fetched %d/%d (%.0f%%)"
-                                       folder-name done total
-                                       (* 100.0 (/ done (max 1 total))))})
+                         :data {:folder folder-name, :done done, :total total}
+                         :msg (format "[%s] fetched %d/%d (%.0f%%)"
+                                      folder-name done total
+                                      (* 100.0 (/ done (max 1 total))))})
             (when batch-fn (batch-fn parsed))
             (recur end done cur-folder (inc reopen-count))))))))
 

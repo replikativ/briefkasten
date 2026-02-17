@@ -52,8 +52,8 @@
           batch-size 50
           uid-batches (partition-all batch-size (sort new-uids))]
       (trove/log! {:level :info, :id ::fetch-new
-                    :data {:folder folder-name, :count total}
-                    :msg (format "[%s] %d new messages to fetch by UID" folder-name total)})
+                   :data {:folder folder-name, :count total}
+                   :msg (format "[%s] %d new messages to fetch by UID" folder-name total)})
       (loop [remaining uid-batches
              total-stored 0
              total-errors 0]
@@ -66,10 +66,10 @@
                 done (+ total-stored stored)
                 errs (+ total-errors errors)]
             (trove/log! {:level :info, :id ::store-progress
-                          :data {:folder folder-name, :done done, :total total}
-                          :msg (format "[%s] stored %d/%d (%.0f%%)"
-                                       folder-name done total
-                                       (* 100.0 (/ done (max 1 total))))})
+                         :data {:folder folder-name, :done done, :total total}
+                         :msg (format "[%s] stored %d/%d (%.0f%%)"
+                                      folder-name done total
+                                      (* 100.0 (/ done (max 1 total))))})
             (recur (rest remaining) done errs))
           {:fetched total :stored total-stored :errors total-errors})))))
 
@@ -107,8 +107,8 @@
    Streams batches directly to datahike+scriptum for visible progress."
   [imap-store conn folder-eid writer account-id folder-name data-path]
   (trove/log! {:level :info, :id ::initial-sync
-                :data {:folder folder-name}
-                :msg (format "[%s] initial sync (full MIME, streaming)..." folder-name)})
+               :data {:folder folder-name}
+               :msg (format "[%s] initial sync (full MIME, streaming)..." folder-name)})
   (let [total-stored (atom 0)
         total-errors (atom 0)
         batch-fn (fn [parsed-batch]
@@ -119,10 +119,10 @@
                      (swap! total-stored + stored)
                      (swap! total-errors + errors)
                      (trove/log! {:level :info, :id ::batch-progress
-                                   :data {:folder folder-name, :total-stored @total-stored
-                                          :batch-stored stored, :batch-errors errors}
-                                   :msg (format "[%s] stored %d (batch: %d stored, %d errors)"
-                                                folder-name @total-stored stored errors)})))
+                                  :data {:folder folder-name, :total-stored @total-stored
+                                         :batch-stored stored, :batch-errors errors}
+                                  :msg (format "[%s] stored %d (batch: %d stored, %d errors)"
+                                               folder-name @total-stored stored errors)})))
         fetched (imap/fetch-all-messages imap-store folder-name
                                          :data-path data-path
                                          :batch-fn batch-fn)]
@@ -154,10 +154,10 @@
       (let [remote-uids (imap/fetch-uids imap-store folder-name)
             {:keys [new deleted existing]} (detect-changes remote-uids local-uids)
             _ (trove/log! {:level :info, :id ::incremental-diff
-                            :data {:folder folder-name, :new (count new)
-                                   :deleted (count deleted), :existing (count existing)}
-                            :msg (format "[%s] diff: %d new, %d deleted, %d existing"
-                                         folder-name (count new) (count deleted) (count existing))})
+                           :data {:folder folder-name, :new (count new)
+                                  :deleted (count deleted), :existing (count existing)}
+                           :msg (format "[%s] diff: %d new, %d deleted, %d existing"
+                                        folder-name (count new) (count deleted) (count existing))})
             new-result (apply-new-messages! imap-store conn folder-eid writer
                                             account-id folder-name new data-path)
             del-result (apply-deletions! conn folder-eid writer
